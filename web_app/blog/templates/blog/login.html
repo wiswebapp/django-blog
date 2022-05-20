@@ -1,0 +1,44 @@
+{% extends 'blog/includes.html' %}
+{% block title %}Login {% endblock %}
+{% block body %}
+<h3>Login Now</h3>
+<hr>
+{% for message in messages %}
+    <div class="alert alert-dismissible alert-{{ message.tags }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>{{ message }}</p>
+    </div>
+{% endfor %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Please Authenticate to Add/Edit Blogs</h3>
+    </div>
+    <div class="panel-body col-md-offset-2">
+        <img style="max-height: 170px;margin-left:220px;" src="https://dhananjanfinancial.com/images/login-bg.gif" alt="">
+        <form action="/blog/login" method="post">
+            {%csrf_token%}
+            <div class="form-group">
+                <label class="col-lg-2 control-label text-right">Username</label>
+                <div class="col-lg-6">
+                    <input type="email" name="username" required class="form-control" placeholder="Please Enter Username">
+                </div>
+            </div>
+            <div class="clearfix"></div><br>
+            <div class="form-group">
+                <label class="col-lg-2 control-label text-right">Password</label>
+                <div class="col-lg-6">
+                    <input type="password" name="password" required class="form-control" placeholder="Please Enter Password">
+                </div>
+            </div>
+            <div class="clearfix"></div><br>
+            <div class="form-group" align="center">
+                <div class="col-lg-10">
+                    <button class="btn btn-success">Login</button>
+                    <button type="reset" class="btn btn-default">Reset</button>
+                    <a href="/blog/register" class="btn btn-link">Not Have an account ?</a>
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'blog/includes.html' %}
+{% block title %}Tags{% endblock %}
+{% block body %}
+<h3>Tags List <a style="float: right;" class="btn btn-sm" href="/blog/tags/create">Create Tag</a></h3>
+<hr>
+{% for message in messages %}
+    <div class="alert alert-dismissible alert-{{ message.tags }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>{{ message }}</p>
+        <!-- <h4>{% if  message.tags == "danger" %}Whoops .!{% else %}Success{% endif %}</h4> -->
+    </div>
+{% endfor %}
+<table class="table table-bordered" id="blogIndex">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Created on</th>
+            <th>Tag Name</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if tagData %}
+        {% for tag in tagData %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{tag.created_at|date:"d M Y"}}</td>
+            <td>{{tag}}</td>
+            <td><label for="" class="label label-{{ tag.status|yesno:'success,danger,danger' }}">{{ tag.status|yesno:"Active,InActive,Deleted" }}</label></td>
+            <td><a href="/blog/tags/edit/{{tag.id}}">Edit</a> | <a href="/blog/tags/delete/{{tag.id}}">Delete</a></td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr align="center">
+            <td colspan="5">No Tags Found</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+<p>
+    {% if previous_month %}
+        Previous Month: {{ previous_month|date:"F Y" }}
+    {% endif %}
+    {% if next_month %}
+        Next Month: {{ next_month|date:"F Y" }}
+    {% endif %}
+</p>
+
+
+{% endblock %}

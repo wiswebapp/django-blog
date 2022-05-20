@@ -1,0 +1,5 @@
+.idea/
+web_app/blog/migrations/__pycache__/
+web_app/blog/__pycache__/
+web_app/media/blog/
+web_app/web_app/__pycache__/

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-2.2.4.js" ></script>
+    <script src="https://bootswatch.com/3/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://bootswatch.com/3/paper/bootstrap.min.css">
+    <title>Home page | Python Training</title>
+</head>
+<body>
+<div class="container-fluide">
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/blog">Python Training</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/blog">Blog</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+</div>
+
+<div class="container">
+    <div class="jumbotron">
+      <h1>Hi, I Am Webster</h1>
+      <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+        <hr>
+        <form action="/makeupper/" method="post" class="form-horizontal">
+            {% csrf_token %}
+            {{form }}
+            <div class="form-group">
+              <label for="inputEmail" class="col-lg-2 control-label">Enter Your Text Here :</label>
+              <div class="col-lg-10">
+                <textarea name="analyzeText" required class="form-control" placeholder="e.g. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Nulla quis lorem ut libero malesuada feugiat."></textarea>
+              </div>
+            </div>
+            <div class="col-lg-10">
+                <div class="checkbox">
+                  <label>
+                    <input name="ignoreSpecialCase" type="checkbox"> Ignore Special Chars
+                  </label>
+                </div>
+            </div>
+            <div class="form-group">
+              <div class="col-lg-10 col-lg-offset-2">
+                <button type="reset" class="btn btn-default">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

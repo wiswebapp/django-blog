@@ -1,0 +1,142 @@
+{% extends 'blog/includes.html' %}
+{% block title %}My Blogs{% endblock %}
+{% block body %}
+<h3>My Blog List <a href="add/" class="btn btn-default pull-right">Add Blog</a></h3>
+<hr>
+{% for message in messages %}
+    <div class="alert alert-dismissible alert-{{ message.tags }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>{{ message }}</p>
+        <!-- <h4>{% if  message.tags == "danger" %}Whoops .!{% else %}Success{% endif %}</h4> -->
+    </div>
+{% endfor %}
+<div id="accordion">
+    <h3>Filter Data</h3>
+    <form action="">
+        <div class="form-group col-md-3">
+            <input style="width: 100%;" name="searchTitle" value="{{ searchTitle|default:'' }}" placeholder="Filter by Search Title" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-3">
+            <select style="width: 100%;" name="searchCat" class="form-control searchCat selectJui">
+                <option value="">Filter by Category</option>
+                {% for cat in catData %}
+                <option value="{{cat.id}}">{{cat}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <select style="width: 100%;" name="searchStatus" class="form-control searchStatus selectJui">
+                <option value="">Filter By Status</option>
+                <option value="1">Published</option>
+                <option value="0">UnPublished</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <input class="widget" type="submit" value="Search">
+            <a class="widget" href="/blog/myblogs">Reset</a>
+        </div>
+    </form>
+</div>
+<table class="table table-bordered" id="myblogIndex">
+    <thead>
+        <tr>
+            <th align="center">#</th>
+            <th>Blog Image</th>
+            <th>Category</th>
+            <th>Blog Title</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if count > 0 %}
+        {% for i in blogData %}
+        <tr class="{{ i.is_published|yesno:'published,not-published' }}">
+            <td style="width: 3%;" align="center">{{forloop.counter}}</td>
+            <td style="width: 15%;" align="center">
+                <img style="height:100px" alt="No Preview Available" class="img-thumbnail" src="/media/{{i.blog_imgs.path}}">
+            </td>
+            <td style="width: 7%;"><h5>{{i.category}}</h5></td>
+            <td>
+                <a href="/blog/edit/{{i.id}}"><h5>{{i.blog_with_cat}}</h5></a>
+                {% if i.is_published %}
+                <p>{{i.description|truncatechars:300|striptags}}</p>
+                {% else %}
+                <p class="text-danger"><code>Note : This Blog isn't Published yet</code></p>
+                {% endif %}
+                {% for tag in blogTags %}<span class="label label-{{tagClass|random}}">{{tag}}</span>&nbsp;&nbsp;{% endfor %}
+            </td>
+            <td style="width: 12%;">
+                {% if user.is_authenticated %}
+                <a title="Edit Blog" class="btn btn-sm btn-warning" href="/blog/edit/{{i.id}}"><i class="fa fa-pencil-square-o"></i> Edit</a>
+                <a class="remove_blog_{{i.id}}" style="display: none;" href="/blog/remove/{{i.id}}"></a>
+                <a title="Delete Blog" data-id="{{i.id}}" class="btn btn-sm btn-danger removeBlog"><i class="fa fa-trash"></i></a>
+                {% else %}
+                <a title="View Blog" class="btn btn-block btn-link" href="/blog/view/{{i.id}}"><i class="fa fa-eye"></i> View</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="5" align="center">
+                <img src="https://i.gifer.com/7yiJ.gif" alt="">
+                <h4>Whoops.. No Blogs Found .!</h4>
+            </td>
+            <td style="display: none;"></td>
+            <td style="display: none;"></td>
+            <td style="display: none;"></td>
+            <td style="display: none;"></td>
+        </tr>
+        {% endif %}
+        <tfoot>
+            <tr>
+                <td colspan="5">
+                    <span class="text-muted">Showing <b>{{countCurrent}}</b> out of <b>{{count}}</b> entries</span>
+                    {% if blogData.has_previous or blogData.has_next %}
+                    <ul class="pagination" style="float: right;margin:0px;padding:0px;">
+                        {% if blogData.has_previous %}
+                        <li class="page-item"><a href="?searchTitle={{searchTitle}}&searchCat={{searchCat}}&page=1">First</a></li>
+                            <!-- <li class="page-item"><a href="?page={{ blogData.previous_page_number }}">Previous</a></li> -->
+                        {% endif %}
+                        {% for page in blogData.paginator.page_range %}
+                        {% if blogData.number == page %}
+                            <li class="page-item active"><a href="?searchTitle={{searchTitle}}&searchCat={{searchCat}}&page={{page}}" class="page-link">{{page}}</a></li>
+                        {% else %}
+                            <li class="page-item"><a href="?searchTitle={{searchTitle}}&searchCat={{searchCat}}&page={{page}}" class="page-link">{{page}}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if blogData.has_next %}
+                            <!-- <li class="page-item"><a href="?page={{ blogData.next_page_number }}" class="page-link">Next</a></li> -->
+                            <li class="page-item"><a href="?searchTitle={{searchTitle}}&searchCat={{searchCat}}&page={{ blogData.paginator.num_pages }}">Last</a></li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </td>
+            </tr>
+        </tfoot>
+    </tbody>
+</table>
+<script>
+    $(".removeBlog").click(function(){
+        dataId = $(this).data('id')
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are You Sure You Want to Delete ?',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(".remove_blog_" + dataId)[0].click()
+            } else {
+                Swal.fire('We\'ve Not removed that', '', 'info')
+            }
+        })
+    })
+    {% if searchCat %}
+    $(".searchCat").val({{searchCat}})
+    {% endif %}
+    {% if searchStatus %}
+    $(".searchStatus").val({{searchStatus}})
+    {% endif %}
+</script>
+{% endblock %}

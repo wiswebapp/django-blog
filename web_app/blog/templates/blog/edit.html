@@ -1,0 +1,106 @@
+{% extends 'blog/includes.html' %}
+{% block title %}Edit Blogs{% endblock %}
+{% block body %}
+<style>
+  
+</style>
+
+<!-- {% for message in messages %}
+    <div class="alert alert-dismissible alert-{{ message.tags }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h4>{{ message }}</h4>
+    </div>
+{% endfor %} -->
+
+<h4>{{action}} Blog</h4><hr>
+{% if action == "Add" %}
+<form action="/blog/add/" method="post" enctype="multipart/form-data" novalidate>
+{% else %}
+<form action="/blog/edit/{{blogData.id}}" method="post" enctype="multipart/form-data" novalidate>
+{% endif %}
+    {% csrf_token %}
+    <div class="form-group">
+        <label>Blog Category</label>
+        {{formSkelton.category}}
+        <p class="text-danger">{{formSkelton.category.errors|striptags}}</p>
+    </div>
+    <div class="form-group">
+      <label>Blog Title</label>
+      {{formSkelton.title}}
+      <p class="text-danger">{{formSkelton.title.errors|striptags}}</p>
+    </div>
+    <div class="form-group">
+      <label>Blog Description</label>
+      {{formSkelton.description}}
+      <p class="text-danger">{{formSkelton.description.errors|striptags}}</p>
+    </div>
+    <div class="form-group">
+      <label>Blog Image</label>
+      {{formSkelton.blog_img}}
+    </div>
+    <div class="form-group blogImageSection">
+    {% if blogsImg.0.path %}
+      {% for img in blogsImg %}
+      <div class="col-md-2 boximage">
+        <img src="/media/{{img.path}}" class="img-thumbanail " alt="No Image Availble">
+        <div align="center">
+          <span class="removeImage" data-id="{{img.id}}" data-blog="{{blogData.id}}" style="cursor: pointer;"><i class="fa fa-trash"></i> Remove</span>
+        </div>
+      </div>
+      {% endfor%}
+    {% endif %}
+    </div>
+    <div class="clearfix"></div>
+    <div class="form-group">
+      <label>Blog Tags</label>
+      {{formSkelton.blog_tags}}
+      <p class="text-danger">{{formSkelton.blog_tags.errors|striptags}}</p>
+    </div>
+    <div class="form-group">
+      <label>Is Published ?</label>
+      {{formSkelton.is_published}}
+      <p class="text-danger">{{formSkelton.is_published.errors|striptags}}</p>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-success">{{action}} Data</button>
+      <a href="/blog/myblogs" class="btn btn-default">Cancel</a>
+    </div>
+</form>
+<script src="https://cdn.ckeditor.com/4.18.0/standard/ckeditor.js"></script>
+<script>
+  $("#id_blog_tags").val([{%for tags in blog_tags%}'{{tags.id}}',{% endfor %}]).change();
+  CKEDITOR.replace( 'id_description' );
+  $(".removeImage").click(function(){
+    var imgId = $(this).data("id");
+    var blogId = $(this).data("blog");
+    var curelement = $(this)
+
+    Swal.fire({
+        icon: 'warning',
+        title: 'Are You Sure You Want to Delete ?',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            type : "POST",
+            url : "/blog/removeImg/",
+            data : {
+              imgId:imgId,
+              blogId:blogId,
+              csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success : function(response) {
+                if(response.succes){
+                  curelement.parent().parent().slideUp();
+                  setTimeout(function () {
+                    Swal.fire('Voila !', 'Image Has been removed', 'success');
+                  }, 500);
+                }
+            }
+          });
+        }
+    })
+  });
+</script>
+{% endblock %}
